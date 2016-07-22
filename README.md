@@ -78,12 +78,12 @@ The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above.
 
 
 #### Adding the Library Manually
- 1. Copy Swirl AAR into &lt;Project&gt;/app/libs
+ 1. Copy Swirl AAR into **&lt;Project&gt;/app/libs**
 
  ![](./docs/images/sdk3-import-gradle-01.png)
  
- 2. Open build.gradle (Module: app)
- 3. Add a repository section
+ 2. Open `build.gradle (Module: app)`
+ 3. Add a `repository` section
 ```gradle
 repositories {
     flatDir {
@@ -92,7 +92,7 @@ repositories {
 }
 ```
 
- 4. Compile the AAR in dependencies
+ 4. Compile the AAR in `dependencies`
 ```gradle
 dependencies {
     compile(name: 'swirl-release', ext: 'aar')
