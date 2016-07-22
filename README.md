@@ -78,27 +78,28 @@ The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above.
 
 
 #### Adding the Library Manually
- 1. Copy Swirl AAR into **&lt;Project&gt;/app/libs**
+ 1. Copy the Swirl AAR into **&lt;Project&gt;/app/libs**
 
  ![](./docs/images/sdk3-import-gradle-01.png)
  
- 2. Open `build.gradle (Module: app)`
- 3. Add a `repository` section
-```gradle
-repositories {
-    flatDir {
-        dirs 'libs'
+ 2. Edit `build.gradle (Module: app)`
+ 3. Add a repository for the libs directory
+    ```gradle
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
     }
-}
-```
+    ```
 
- 4. Compile the AAR in `dependencies`
-```gradle
-dependencies {
-    compile(name: 'swirl-release', ext: 'aar')
-    ...
-}
-```
+ 4. Add a line in `dependencies` to compile the Swirl AAR
+    ```gradle
+    dependencies {
+        compile(name: 'swirl-release', ext: 'aar')
+        ...
+    }
+    ```
+ 5. Click **"Sync Now"** in the upper right to apply the changes
 
 #### Adding the Library using Maven
   1. *Coming soon*
@@ -124,6 +125,9 @@ dependencies {
 ```
 #### Registering Components
 ```xml
+<application
+		android:name=".BaseApplication">
+		
   <service  android:name="com.swirl.Swirl$Service"/>
   <receiver android:name="com.swirl.Swirl$Receiver"        android:enabled="true"/>
   <receiver android:name="com.swirl.Swirl$LocationChanged" android:enabled="true"/>
