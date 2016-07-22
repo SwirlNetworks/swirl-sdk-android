@@ -72,55 +72,89 @@ Log in to the Swirl console using supported browser (Chrome or Safari) and using
  3. This process will generate an Application Key. This value will be needed to passed to the SDK at start.
 
 ### Verify Tools and Targets
-The Swirl SDK is compatible with iOS 8.0 and above and is fully iOS 9.0 compliant and BITCODE enabled as required.  You will need to use an Xcode of at least version 7.0 to build applications with this SDK.
+The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above. 
 
-### Add Framework to your Application
-The Swirl SDK is packaged as a statically linked framework called *Swirl.framework*.
+### Add Library to your project and application
 
-#### Adding the Framework Manually
- 1. The Swirl framework should be added to your project under the **Linked Frameworks and Libraries** section of the **General** tab of the target.  You can add this by hitting the '+' and selecting the file.  
- 2. The framework depends upon *CoreLocation*, *CoreBluetooth* and *SystemConfiguration* but those files should be automatically linked for you.  
- 3. It is also recommended (but not required) to add some additional frameworks: *PassKit* for better user experience when the user decides to save delivered content to their wallet and *AdSupport* for access to the AdvertisingIdentifier.
+
+#### Adding the Library Manually
+ 1.   
+ 2. 
+ 3. 
 
  ![](./docs/images/sdk3-add-framework.png)
 
-#### Adding the Framework Using Cocoapods
+#### Adding the Library using Maven
   1. *Coming soon*
 
-### Modify the Info.plist
- **Location Services**
- Edit the Info.plist and ensure that `NSLocationAlwaysUsageDescription` or `NSLocationWhenInUseUsageDescription` exists with a user-visible usage description.  Location services will not work without one of these modes being set.  The SDK can function in either mode, but if you want to be able to receive background notifications, NSLocationAlwaysUsageDescription is required.
- 
- **Bluetooth Services**
- If you are requesting location tracking always permission, and you wish to detect BLE beacons in the background, then you need to include the appropriate “Background Mode” permission.  
-  1. In Xcode, open your application's target and click the Capabilities tab.
-  2. Expand the “Background Modes” section, ensure that the section is ON and that Uses Bluetooth LE accessories is checked.
-  
-  ![](./docs/images/sdk3-capabilities.png)
+### Understanding and Modifying AndroidManifest.xml
+```xml
+    <uses-permission android:name="android.permission.INTERNET" />                  <!-- Required for internet -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />      <!-- Required to check connectivity -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>                  <!-- Required for BLE -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>            <!-- Required for BLE -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>     <!-- Required to start swirl on boot -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />    <!-- Required for location -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />      <!-- Optional for occasional fine-location -->
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:name=".BaseApplication">
+        <meta-data android:name="com.swirl.api_key" android:value="qtDTNJMQ2ZSLK7AGBGL0Gqp0INKXC2Ibn355UIy518Z93"/>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SettingsActivity"></activity>
+
+        <service  android:name="com.swirl.Swirl$Service"/>
+        <receiver android:name="com.swirl.Swirl$Receiver"        android:enabled="true"/>
+        <receiver android:name="com.swirl.Swirl$LocationChanged" android:enabled="true"/>
+        <receiver android:name="com.swirl.Swirl$DeviceChanged"   android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
+            </intent-filter>
+        </receiver>
+        <activity android:name="com.swirl.ContentActivity"/>
+
+    </application>
+```
 
 ### Make Code Changes
 
 #### Permission Changes
-The Swirl SDK requires Location Services, Bluetooth and Local Notifications to be fully effective.  The host application is responsible for managing the opt-in flow and prompting the user for the necessary permissions.  When started, if the proper permissions have not been granted, then functionality will be limited.  If you do not already, you will need to request authorization using `requestAlwausAuthorization` or `requestWhenInUseAuthorization` on an instance of `CLLocationManager`.  You will also need to request the appropriate level of notification permissions using `registerUserNotificationSettings` on `UIApplication`.  Examples of how to do this are included in our sample application.
+The Swirl SDK requires Location Services, Bluetooth and Local Notifications to be fully effective.  The host application is responsible for managing the opt-in flow and prompting the user for the necessary permissions.  When started, if the proper permissions have not been granted, then functionality will be limited.  
+
+**android 6.0** DYNAMIC PERMISSIONS
+If you do not already, you will need to request authorization using `requestAlwausAuthorization` or `requestWhenInUseAuthorization` on an instance of `CLLocationManager`.  You will also need to request the appropriate level of notification permissions using `registerUserNotificationSettings` on `UIApplication`.  Examples of how to do this are included in our sample application.
 
 #### Background Launch Changes
-With location services and/or Bluetooth Low Energy (BLE) scanning enabled, application launches can happen in the background in addition to the foreground.  If your application does not already handle background launches, this can be the biggest change when integrating the SDK.  Make sure to restructure the startup flow to distinguish between foreground launches and background launches and to ensure that the ***minimal*** work is done when launched into the background (like avoiding networking calls and creating the user interface).  Failing to segment this properly will result in less than optimal operation and could result in excessive battery drain.
+subclass MainApplication notes why do this....
 
-#### Import the Framework Header
-You will need to import the Swirl header any place you reference Swirl objects and methods.  If you are using Swift, then including this file in your Bridging header is a good place.
-```objective-c
-#import <Swirl/Swirl.h>
-```
 #### Initialize, Configure and Start
 A lot of time and effort has been put into making the Swirl SDK as simple as possible without sacrificing functionality or power.  Due to the possibility of background launches caused by CoreLocation or CoreBluetooth services that the SDK starts, the best place to initialize and start the SDK is early in `application:didFinishLaunchingWithOptions:`
-```objective-c
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)options {
-    // optionally add the default content services
-    [[Swirl shared] addDelegate:[SWRLContentManager new]];    
-    // start the basic Swirl proximity services
-    [[Swirl shared] start:@{ SWRLSettingApiKey:APIKEY }];
-    // ...other application startup code...
-    return YES;
+```java
+public class BaseApplication extends Application {
+    @Override public void onCreate() {
+        super.onCreate();
+        
+        Bundle options = new Bundle();
+        // set any options you want to set at startup (or pass null)
+
+        Swirl.getInstance(this).addListener(new ContentManager(this));
+        Swirl.getInstance().start(options);
+    }
 }
 ```
 
