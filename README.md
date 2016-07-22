@@ -91,33 +91,33 @@ The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above.
 
 #### Permissions
 ```xml
-    <uses-permission android:name="android.permission.INTERNET" />                  <!-- Required for internet -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />      <!-- Required to check connectivity -->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.BLUETOOTH"/>                  <!-- Required for BLE -->
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>            <!-- Required for BLE -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>     <!-- Required to start swirl on boot -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />    <!-- Required for location -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />      <!-- Optional for occasional fine-location -->
+ <uses-permission android:name="android.permission.INTERNET" />                  <!-- Required for internet -->
+ <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />      <!-- Required to check connectivity -->
+ <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+ <uses-permission android:name="android.permission.BLUETOOTH"/>                  <!-- Required for BLE -->
+ <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>            <!-- Required for BLE -->
+ <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>     <!-- Required to start swirl on boot -->
+ <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />    <!-- Required for location -->
+ <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />      <!-- Optional for occasional fine-location -->
 ```
 #### Startup Options
 ```xml
-    <application
-        <meta-data android:name="com.swirl.api_key" android:value="YOU-CAN-PUT-YOUR-API-KEY-HERE"/>
-        ...
+ <application
+     <meta-data android:name="com.swirl.api_key" android:value="YOU-CAN-PUT-YOUR-API-KEY-HERE"/>
+     ...
 ```
 #### Registering Components
 ```xml
-        <service  android:name="com.swirl.Swirl$Service"/>
-        <receiver android:name="com.swirl.Swirl$Receiver"        android:enabled="true"/>
-        <receiver android:name="com.swirl.Swirl$LocationChanged" android:enabled="true"/>
-        <receiver android:name="com.swirl.Swirl$DeviceChanged"   android:enabled="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.net.wifi.STATE_CHANGE"/>
-            </intent-filter>
-        </receiver>
-        <activity android:name="com.swirl.ContentActivity"/>
+  <service  android:name="com.swirl.Swirl$Service"/>
+  <receiver android:name="com.swirl.Swirl$Receiver"        android:enabled="true"/>
+  <receiver android:name="com.swirl.Swirl$LocationChanged" android:enabled="true"/>
+  <receiver android:name="com.swirl.Swirl$DeviceChanged"   android:enabled="true">
+      <intent-filter>
+          <action android:name="android.intent.action.BOOT_COMPLETED"/>
+          <action android:name="android.net.wifi.STATE_CHANGE"/>
+      </intent-filter>
+  </receiver>
+  <activity android:name="com.swirl.ContentActivity"/>
 ```
 
 ### Make Code Changes
