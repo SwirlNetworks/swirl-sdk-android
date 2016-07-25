@@ -3,11 +3,15 @@ The Swirl platform is designed as a complete proximity platform detecting a vari
 
 ## Contents
 - [Understanding Swirl](#understanding-swirl)
+  - [Concepts and Objects](#concepts-and-objects)
 - [Technical Overview](#technical-overview)
+  - [Architechture](#architecture)
 - [Integration](#integration)
-- [Additional Resources](#additional-resources)
-- [License](#license)
-- [Changelog](#changelog)
+  - [Application Key](#get-application-key)
+  - [Verify Tools and Targets](#verify-tools-and-targets)
+  - [Add Framework to your Application](#add-library-to-your-application)
+  - [Understanding and Modifying AndroidManifest.xml](#understanding-and-modifying-androidmanifestxml)
+  - [Make Code Changes](#make-code-changes)
 
 ## Understanding Swirl
 ![](./images/sdk3-architecture-overview.png)
@@ -37,7 +41,7 @@ Earier versions of the Swirl SDK enforced a strict user opt-in policy which ofte
 ### Architecture
 The architecture of the Swirl SDK is similar on all platforms.  The Swirl object acts as a shell which establishes a working queue or thread, a common message bus and loads various managers into that enviorment.  The SDK glues together signal detection code that interacts with OS apis for detecting beacon, wifi and geofence signals with code that interacts with the swirl REST APIs to determine logical metadata like location, placement and other custom metadata.  In addition, the SDK tracks and accumulates dwell and can manage interaction with the platform to request and display targeted content.
 
-![](./docs/images/sdk3-android-architecture.png)
+![](./images/sdk3-android-architecture.png)
 
 #### Key components
 The following is a list of the key components of the SDK and a brief description of each.  Most of these components are internal to the SDK but their description here is provided to help understand the operaiton of the SDK.  It is important to note that developers can extend the operation of the Swirl SDK by adding their own managers to the internal message bus and participate fully in its operation.
@@ -62,13 +66,13 @@ Log in to the Swirl console using supported browser (Chrome or Safari) and using
 ### Verify Tools and Targets
 The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above. 
 
-### Add Library to your project and application
+### Add Library to your Application
 
 
 #### Adding the Library Manually
  1. Copy the Swirl AAR into **&lt;Project&gt;/app/libs**
 
- ![](./docs/images/sdk3-import-gradle-01.png)
+ ![](./images/sdk3-import-gradle-01.png)
  
  2. Edit `build.gradle (Module: app)`
  3. Add a repository for the libs directory
