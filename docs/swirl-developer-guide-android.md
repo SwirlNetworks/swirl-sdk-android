@@ -97,8 +97,13 @@ The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above.
   1. *Coming soon*
 
 ### Understanding and Modifying AndroidManifest.xml
+Curently, most of the manifest changes are not included in the libraries AndroidManifest.xml and you are required to add the necessary permissions and registrations to the application AndroidManifest.xml.  This is currently done on purpose to give more control to the application developer with regards to what features to enable, etc.
 
 #### Permissions
+There are static and dynamic permissions required to enable the Swirl library to function properly.  Below is the basic set of static permissions required to use Swirl.  Certain permissions in here are optional on the whole, but required for certain features.  For example, ACCESS_WIFI_STATE is required for using Wifi access points as signals for the platform.
+
+There are additional changes that are required for Android 6.0 but those need to be made in code and are mentioned below.
+
 ```xml
  <uses-permission android:name="android.permission.INTERNET" />                  <!-- Required for internet -->
  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />      <!-- Required to check connectivity -->
@@ -110,12 +115,20 @@ The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above.
  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />      <!-- Optional for occasional fine-location -->
 ```
 #### Startup Options
+There are several ways to pass startup options to the Swirl library.  You can do so when you call start by passing a Bundle of options in, or you can use the string representation of the option added to the application meta-data within the AndroidManifest.xml.  Note that all such keys are prefixed with `com.swirl`.  See below for an example using API_KEY.
+
 ```xml
  <application
      <meta-data android:name="com.swirl.api_key" android:value="YOU-CAN-PUT-YOUR-API-KEY-HERE"/>
      ...
 ```
 #### Registering Components
+
+In order for the library to function properly, a number of components need to be registered in the manifest.  
+1. Swirl uses a service to run in the background.  This services is sticky and runs for a set period of time after being launched in response to some signal from the OS.  This service must be registered.
+2. Several BroadcastReceivers also are employed to receive various inputs from the OS.  These receivers are used to catch Notification events (OPEN, DISMISS), Alarm Events, Location Events, and Device Change events (NETWORK, WIFI, etc).
+3. ContentActivity.  If you are using the ContentManager to schedule targeted content against your signals (geofence, wifi, beacon), and you want want to display interstitial content, then you need to register the ContentActivity which is launched to display the web content.
+
 ```xml
 <application
 		android:name=".BaseApplication">
@@ -135,13 +148,10 @@ The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above.
 ### Make Code Changes
 
 #### Permission Changes
-The Swirl SDK requires Location Services, Bluetooth and Local Notifications to be fully effective.  The host application is responsible for managing the opt-in flow and prompting the user for the necessary permissions.  When started, if the proper permissions have not been granted, then functionality will be limited.  
+The Swirl SDK requires Location Services, Bluetooth and Local Notifications to be fully effective.  The host application is responsible for managing the opt-in flow and prompting the user for the necessary permissions.  When started, if the proper permissions have not been granted, then functionality will be limited.  To support Android 6.0, ff you do not already, you will need to request dynamic permissions for Location.
 
-**android 6.0** DYNAMIC PERMISSIONS
-If you do not already, you will need to request authorization using `requestAlwausAuthorization` or `requestWhenInUseAuthorization` on an instance of `CLLocationManager`.  You will also need to request the appropriate level of notification permissions using `registerUserNotificationSettings` on `UIApplication`.  Examples of how to do this are included in our sample application.
-
 #### Background Launch Changes
-subclass MainApplication notes why do this....
+Because there are a number of different ways that Swirl can be launched we recommend you subclass the Application and initialize Swirl there.  That way, no matter how the functionality is launched that initialization will be done first and Swirl will be ready and running when it needs to process the event that cause the launch.
 
 #### Initialize, Configure and Start
 A lot of time and effort has been put into making the Swirl SDK as simple as possible without sacrificing functionality or power.  Due to the possibility of background launches caused by CoreLocation or CoreBluetooth services that the SDK starts, the best place to initialize and start the SDK is early in `application:didFinishLaunchingWithOptions:`
