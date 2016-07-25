@@ -7,9 +7,9 @@ The Swirl platform is designed as a complete proximity platform detecting a vari
 - [Technical Overview](#technical-overview)
   - [Architechture](#architecture)
 - [Integration](#integration)
-  - [Application Key](#get-application-key)
+  - [Get Application Key](#get-application-key)
   - [Verify Tools and Targets](#verify-tools-and-targets)
-  - [Add Framework to your Application](#add-library-to-your-application)
+  - [Add Library to your Application](#add-library-to-your-application)
   - [Understanding and Modifying AndroidManifest.xml](#understanding-and-modifying-androidmanifestxml)
   - [Make Code Changes](#make-code-changes)
 
