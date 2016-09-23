@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
 	compileSdkVersion 23
-	buildToolsVersion "24.0.1"
+	buildToolsVersion "23.0.1"
 
 	defaultConfig {
 		applicationId "com.swirl.swirlx"
@@ -30,5 +30,5 @@ dependencies {
 	testCompile 'junit:junit:4.12'
 	compile 'com.android.support:appcompat-v7:23.4.0'
 	compile 'com.android.support:design:23.4.0'
-	compile(name: 'swirl-release', ext: 'aar')
+	compile(name: 'Swirl', ext: 'aar')
 }

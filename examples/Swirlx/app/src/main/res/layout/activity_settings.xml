@@ -17,6 +17,34 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
             android:textColor="#000000"
+            android:text="Domain"
+            android:textSize="9pt"
+            />
+        <EditText
+            android:id="@+id/api_host"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:hint=""
+            android:singleLine="true"
+            android:maxLength="20"
+            android:gravity="right"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_marginLeft="4pt"
+        android:layout_marginRight="4pt"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:textColor="#000000"
             android:text="Content Code"
             android:textSize="9pt"
             />
@@ -114,6 +142,32 @@
             android:singleLine="true"
             android:maxLength="20"
             android:gravity="right"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_marginLeft="4pt"
+        android:layout_marginRight="4pt"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:textColor="#000000"
+            android:text="Clear Location Locks"
+            android:textSize="9pt"
+            />
+
+        <Button
+            android:id="@+id/clear_location_locks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="Clear"
             />
     </LinearLayout>
 </LinearLayout>

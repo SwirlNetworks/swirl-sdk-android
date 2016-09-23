@@ -59,21 +59,59 @@
             android:text=""
             android:textStyle="italic"
             />
-
         <Button
-            android:id="@+id/show_content"
-            android:textAllCaps="false"
-            android:onClick="onShowContent"
-            android:layout_width="match_parent"
+            android:id="@+id/all_visits"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@android:color/transparent"
-            android:textAlignment="center"
-            android:text="[ Show Content View ]"
+            android:layout_gravity="center_horizontal"
+            android:onClick="onShowVisits"
+            android:textAllCaps="false"
+            android:text="[ Show All Visits ]"
             android:textStyle="italic"
             android:textColor="#808080"
             android:textSize="6pt"
+            android:background="@android:color/transparent"
             />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/show_content"
+                android:textAllCaps="false"
+                android:onClick="onShowContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="20dp"
+                android:background="@android:color/transparent"
+                android:textAlignment="center"
+                android:text="[ Show Content View ]"
+                android:textStyle="italic"
+                android:textColor="#808080"
+                android:textSize="6pt"
+                />
+
+            <Button
+                android:id="@+id/show_map"
+                android:textAllCaps="false"
+                android:onClick="onShowMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:textAlignment="center"
+                android:text="[ Show Map View ]"
+                android:textStyle="italic"
+                android:textColor="#808080"
+                android:textSize="6pt"
+                android:layout_gravity="center_horizontal"
+                />
+        </LinearLayout>
 
 
         <TextView
