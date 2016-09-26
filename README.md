@@ -16,7 +16,7 @@ There are a number of additional documents and resources available to facilitate
 
 #### For Implementation
 * [Swirl Proximity Developer Guide for Android](./docs/swirl-developer-guide-android.md)
-* [Swirl Proximity Library Reference for Android](https://SwirlNetworks.github.io/swirl-sdk-android/index.html)
+* [Swirl Proximity Library Reference for Android](https://swirlnetworks.github.io/swirl-sdk-android/docs/reference-guide/index.html)
 * [Example Source Code for Android](./examples/)
 
 #### For Testing
