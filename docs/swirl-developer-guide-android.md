@@ -154,7 +154,7 @@ The Swirl SDK requires Location Services, Bluetooth and Local Notifications to b
 Because there are a number of different ways that Swirl can be launched we recommend you subclass the Application and initialize Swirl there.  That way, no matter how the functionality is launched that initialization will be done first and Swirl will be ready and running when it needs to process the event that cause the launch.
 
 #### Initialize, Configure and Start
-A lot of time and effort has been put into making the Swirl SDK as simple as possible without sacrificing functionality or power.  Due to the possibility of background launches caused by CoreLocation or CoreBluetooth services that the SDK starts, the best place to initialize and start the SDK is early in `onCreate` in your `Application` subclass.
+A lot of time and effort has been put into making the Swirl SDK as simple as possible without sacrificing functionality or power.  Due to the possibility of background launches caused by LocationManager or AlarmManager or other broadcast Intents that the SDK has registered for, the best place to initialize and start the SDK is early in `onCreate` in your `Application` subclass.
 ```java
 public class BaseApplication extends Application {
     @Override public void onCreate() {
