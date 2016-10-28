@@ -16,8 +16,7 @@ import com.swirl.Content;
 import com.swirl.ContentManager;
 import com.swirl.Swirl;
 import com.swirl.SwirlListener;
-
-import org.json.JSONObject;
+// import com.swirl.NearbyManager;
 
 public class BaseApplication extends Application {
 	private BackgroundListener  backgroundListener = new BackgroundListener();
@@ -26,14 +25,15 @@ public class BaseApplication extends Application {
 		super.onCreate();
 
 		SharedPreferences prefs = getSharedPreferences("Swirlx", MODE_PRIVATE);
-
 		Bundle options = SettingsActivity.options(prefs);
+        // uncomment this line to enable the use of Google Nearby
+		// Swirl.getInstance(this).addListener(new NearbyManager(null));
 		Swirl.getInstance(this).addListener(new ContentManager(this));
 		Swirl.getInstance().addListener(backgroundListener);
+
+		Swirl.getInstance().setUserInfo(SettingsActivity.userInfo(prefs));
 		Swirl.getInstance().start(options);
 
-		JSONObject userInfo = SettingsActivity.userInfo(prefs);
-		Swirl.getInstance().setUserInfo(userInfo);
 	}
 
 	class BackgroundListener extends SwirlListener {

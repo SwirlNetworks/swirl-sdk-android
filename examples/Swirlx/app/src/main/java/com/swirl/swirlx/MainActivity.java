@@ -30,6 +30,7 @@ import com.swirl.Swirl;
 import com.swirl.SwirlListener;
 import com.swirl.Visit;
 import com.swirl.VisitManager;
+//import com.swirl.NearbyManager;
 
 import org.json.JSONObject;
 
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         updateIdentifierVersion();
+        //NearbyManager.getInstance().setActivity(this);
         requestPermissions();
     }
 
@@ -136,6 +138,9 @@ public class MainActivity extends AppCompatActivity {
 
             JSONObject userInfo = SettingsActivity.userInfo(prefs);
             Swirl.getInstance().setUserInfo(userInfo);
+
+            //NearbyManager.getInstance().setActivity(this);
+
         }
     }
 
@@ -190,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
         statusListener.onStatusChange(Swirl.getInstance().getStatus());
         statusListener.onLocationUpdate();
 
+        //NearbyManager.getInstance().setActivity(this);
+
         if (settingsChanged) {
             settingsChanged = false;
             reset();
@@ -237,6 +244,15 @@ public class MainActivity extends AppCompatActivity {
         public void onLocationUpdate() {
             updateLocationStatus(getFirstLocation(getVisitManager()));
         }
+
+//        @Override protected void onNearbyMessage(NearbyManager manager, String namespace, String type, byte[] content, int rssi) {
+//            try {
+//                Log.i("swirlx", "namespace=" + namespace + ", type=" + type + ", content=" + new String(content) + ", rssi=" + rssi);
+//            } catch (Throwable e) {
+//                Log.e("swirlx", Log.getStackTraceString(e));
+//            }
+//        }
+
 
         @Override protected void onBeginVisit(VisitManager manager, Visit visit) {
             visitManager = manager; onLocationUpdate();

@@ -12,6 +12,7 @@ The Swirl platform is designed as a complete proximity platform detecting a vari
   - [Add Library to your Application](#add-library-to-your-application)
   - [Understanding and Modifying AndroidManifest.xml](#understanding-and-modifying-androidmanifestxml)
   - [Make Code Changes](#make-code-changes)
+  - [Using Nearby with Swirl](#using-nearby-with-swirl)
 
 ## Understanding Swirl
 ![](./images/sdk3-architecture-overview.png)
@@ -51,6 +52,7 @@ The following is a list of the key components of the SDK and a brief description
 * **BeaconManager**:  A component which subscribes to **BeaconAdvertisement** messages and aggregates those advertisements into a **Beacon** object.  It uses the API to resolve beacons (or not) and to fetch assoicated logical location and placement information and metadata.  It monitors beacons for proximity and manages enter, exit and closest detection.  It posts BeaconEnter, BeaconExit, BeaconDwell, BeacionNearest messages onto the bus.
 * **RegionManager**:  A component which manages a working set of **Region** objects (retreived using the API) that are 'near' the users location.  These regions represent both geofences and 'control' regions.  Geofences have logical location, placement and other metadata associated.  Control regions are used internally by the SDK to control other signal detection, like when to start and stop scanning for beacons or what iBeacon UUIDs are nearby.  This component either starts its own os specific location manager or depends upon the host app to post location information onto the bus.  It generates RegionEnter/RegionExit events onto the bus.
 * **WifiManager**: A component which integrates with the OS interfaces for detecting current connected wifi information and tracks changes to the connection state.  It coordinates through the API with the Swirl platform to get assoicated logical location informationa and associated metadata. It posts WifiEnter, WifiExit, WifiDwell events onto the message bus and creates **WifiInfo** objects.
+* **NearbyManager**:  A component which integrates the Nearby APIs to scan for beacons registered using the google beacon platform. The Nearby APIs return messages attached to beacons with many types.  The NearbyManager automatically handles beacon attachments, processing some internally and returning others to the application.
 * **VisitManager**:  A component which consumes the various Enter/Exit/Dwell events from the signal detectors and tracks enter and exit times, accumulates dwell and elapsed times by location and placement, and generates logical **Visit** objects and events for BeginVisit,DwellVisit, and EndVisit.
 * **ContentManager**: A component which consumes **Visit** objects and events and requests content through the API.  If content is returned, then depending upon application state and SDK settings, it is responsible for displaying OS notifications and launching a content view or an application deep link.  This component is not part of the default set of managers that are loaded and users who want content services will add this object or a subclass of this object to the bus at startup.
 * **API**:  A singleton which wraps the REST API to the Swirl platform.  All communications with the server are secure using https and all APIs must be authenticated using the API Key assigned through the Swirl platform.  
@@ -64,8 +66,11 @@ Log in to the Swirl console using supported browser (Chrome or Safari) and using
  3. This process will generate an Application Key. This value will be needed to passed to the SDK at start.
 
 ### Verify Tools and Targets
-The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above. 
-
+The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above.  
+The Swirl SDK has the following dependecies:
+	'com.google.android.gms:play-services-auth:9+'
+	'com.google.android.gms:play-services-nearby:9+'
+	
 ### Add Library to your Application
 
 
@@ -168,3 +173,59 @@ public class BaseApplication extends Application {
     }
 }
 ```
+
+### Using Nearby with Swirl
+
+Swirl supports Nearby in a number of ways.  You can use Swirl to manage the registration of your beacons and attachments with Nearby and you can use the Swirl SDK to detect beacons and their attachments whether they were registered through Swirl's platform or not.  Beacons registered with the Swirl will be available for Swirl's targeted content delivery, but the SDK can detect and return any attachments on the beacon. 
+
+#### Configure your project for Nearby
+Since the NearbyManager uses the Nearby APIs from google, you will need to ensure that you have an API key allocated thorugh the Google API dashboard and specified in your Manifest.xml.
+
+```xml		
+		<meta-data
+			android:name="com.google.android.nearby.messages.API_KEY"
+			android:value="YOUR-GOOGLE-NEARBY-API-KEY-GOES-HERE"/>
+```
+
+#### Initialize and start the NearbyManager
+
+The Swirl SDK can be used with Nearby by adding the NearbyManager to the set of active managers when starting the SDK.  The NearbyManager is not started by default, but can be added folloing the following examples:
+```java
+	// add default NearbyManager which scans for all project message types
+	Swirl.getInstance().addListener(new NearbyManager(null));
+	
+	// or, configure a specific type or Eddystone-UID namespace
+	Swirl.getInstance().addListener(new NearbyManager(null)
+		.addEddystoneNamespace(""f86410c4c588a9cec5f2"));
+```
+Due to a design choice with the Nearby APIs, initiating message scanning (even for BLE only messages) requires an Activity context.  As a result, you must call the `setActivity` method on the NearbyManager to provide an appropriate context.  Without an appropriate context, Nearby will cease message detection.
+
+```java
+	// be sure to call this whenever the activity changes
+	NearbyManager.getInstance().setActivity(this);
+```
+#### Getting Beacon Attachments
+
+Nearby has a very flexible system for attaching data to beacons and the SDK will return those attachments when encountered through a callback on the `SwirlListener`:
+```java
+    /**
+     * Call whenever the NearbyManager posts a nearby related message.
+     * @param manager The NearbyManager
+     * @param namespace The project or public attachment namespace
+     * @param type The attachement type
+     * @param content The byte array which is the message content
+     * @param rssi The signal strength if available, or -1 if not available
+     */
+    protected void onNearbyMessage(NearbyManager manager, String namespace, 
+    					String type, byte[] content, int rssi);
+```
+However, it is important to note that some attachments are treated specially by the system and will not be returned through the SDK directly. The following messages are not delivered by `onNearbyMessage` but are handled as specified.
+
+|Message-Namespace|Message-Type|Default Action|
+|-----------------|------------|--------------|
+|`MESSAGE_NAMESPACE_RESERVED`|`MESSAGE_TYPE_EDDYSTONE_UID`|Message content are used to construct an Eddystone-UID `BeaconAdvertisement` object which is then handled as any other scanned BLE advertisement|
+|**project-name**|`swirl`|Message contents are used to construct a `BeaconAdvertisement` object which is then handled appropriately by the system|
+
+#### Try our example
+
+The Swirlx example has all of the code you need to try the Nearby API integration ready to go.  All you need to do is search for Nearby in the `BaseApplication` and `MainActivity` java source and uncomment the lines that are commented out.  In addition, you should add the relevant API keys in the `AndroidManifest.xml` file.
