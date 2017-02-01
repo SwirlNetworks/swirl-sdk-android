@@ -79,7 +79,7 @@ The Swirl SDK has the following dependecies:
 
  ![](./images/sdk3-import-gradle-01.png)
  
- 2. Edit `build.gradle (Module: app)`
+ 2. Edit the *Module* `build.gradle`
  3. Add a repository for the libs directory
     ```gradle
     repositories {
@@ -98,8 +98,34 @@ The Swirl SDK has the following dependecies:
     ```
  5. Click **"Sync Now"** in the upper right to apply the changes
 
-#### Adding the Library using Maven
-  1. *Coming soon*
+#### Adding the Library using Maven or JCenter
+ 1. Edit the *Module* `build.gradle`
+ 2. Add a line in `repositories` to support either Maven or JCenter
+	```gradle
+	repositories {
+		mavenCentral()
+	}
+	```
+	
+	```gradle
+	repositories {
+		jcenter()
+	}
+	```	
+	
+ 3. Add a line in `dependencies` to compile the Swirl AAR
+	```gradle
+    compile 'com.swirl:swirl-sdk-android:<version>'
+    ```
+	i.e.
+	```gradle
+    dependencies {
+        compile 'com.swirl:swirl-sdk-android:3.3'
+        ...
+    }
+    ```
+	
+ 4. Click **"Sync Now"** in the upper right to apply the changes
 
 ### Understanding and Modifying AndroidManifest.xml
 Curently, most of the manifest changes are not included in the libraries AndroidManifest.xml and you are required to add the necessary permissions and registrations to the application AndroidManifest.xml.  This is currently done on purpose to give more control to the application developer with regards to what features to enable, etc.

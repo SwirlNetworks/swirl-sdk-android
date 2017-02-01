@@ -26,6 +26,14 @@ There are a number of additional documents and resources available to facilitate
   Support and Testing Services. Swirl appreciates publishers willing to share their integrated application for Swirl testing. This is an added service that we provide you to ensure that your app has been properly integrated with our SDK. Please contact your Swirl Account Manager to schedule this testing.
 
 ## Release Notes
+**Version:** `3.3` &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `02/01/17`
+<p>
+Replaced up-front device registration with just-in-time device registration (scalability).
+<p>
+**Version:** `3.2.2` &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `01/12/17`
+<p>
+Minor bug fixes.
+<p>
 **Version:** `3.2.1` &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `01/10/17`
 <p>
 Minor bug fixes.
@@ -36,7 +44,7 @@ Adds support for realtime streaming or events; improved support for eddystone; a
 <p>
 **Version:** `3.1` &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `10/21/16`
 <p>
-Support for Google Nearby APIs (NearbyManager) added to libarary and examples.
+Support for Google Nearby APIs (NearbyManager) added to library and examples.
 <p>
 **Version:** `3.0` &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `9/22/16`
 <p>
