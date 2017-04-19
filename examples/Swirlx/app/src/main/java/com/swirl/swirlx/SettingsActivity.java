@@ -13,19 +13,19 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
-
 import com.swirl.Settings;
 import com.swirl.Test;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -39,6 +39,8 @@ public class SettingsActivity extends AppCompatActivity {
         prefs.putString(Settings.API_HOST, "live");
         prefs.putString(Settings.CONTENT_CODE, "");
         prefs.putString(Settings.BEACON_FILTER, "");
+        prefs.putInt(Settings.BEACON_SCAN_MODE, Settings.SCAN_MODE_ALWAYS);
+        prefs.putInt(Settings.ANDROID_MAX_FILTERS, Integer.MAX_VALUE);
         prefs.putString("field_1", "");
         prefs.putString("field_2", "");
         prefs.putInt(Settings.LOCATION_HISTORY_MAX, 32);
@@ -59,7 +61,11 @@ public class SettingsActivity extends AppCompatActivity {
                 if (entry.getValue() instanceof String) {
                     ((EditText) v).setText((String) entry.getValue());
                 } else if (entry.getValue() instanceof Integer) {
-                    ((Spinner) v).setSelection((Integer) entry.getValue());
+                    if (entry.getKey().equals(Settings.BEACON_SCAN_MODE)) {
+                        ((Spinner) v).setSelection(positionForScanMode((Integer) entry.getValue()));
+                    } else if (entry.getKey().equals(Settings.ANDROID_MAX_FILTERS)) {
+                        ((Spinner) v).setSelection(positionForMaxFilters((Integer) entry.getValue()));
+                    }
                 } else if (entry.getValue() instanceof Boolean) {
                     ((Switch) v).setChecked((Boolean) entry.getValue());
                 }
@@ -77,7 +83,11 @@ public class SettingsActivity extends AppCompatActivity {
                 if (entry.getValue() instanceof String) {
                     editor.putString(entry.getKey(), ((EditText) v).getText().toString());
                 } else if (entry.getValue() instanceof Integer) {
-                    editor.putInt(entry.getKey(), ((Spinner) v).getSelectedItemPosition());
+                    if (entry.getKey().equals(Settings.BEACON_SCAN_MODE)) {
+                        editor.putInt(entry.getKey(), scanModeForPosition(((Spinner) v).getSelectedItemPosition()));
+                    } else if (entry.getKey().equals(Settings.ANDROID_MAX_FILTERS)) {
+                        editor.putInt(entry.getKey(), maxFiltersForPosition(((Spinner) v).getSelectedItemPosition()));
+                    }
                 } else if (entry.getValue() instanceof Boolean) {
                     editor.putBoolean(entry.getKey(), ((Switch) v).isChecked());
                 }
@@ -86,6 +96,42 @@ public class SettingsActivity extends AppCompatActivity {
         editor.commit();
 
         MainActivity.settingsChanged = !prefs.getAll().equals(original);
+    }
+
+    /*
+        ANDROID_MAX_FILTERS
+
+        Spinner     Value       Meaning
+        ----------------------------------------
+        0           0           No filters
+        1           5           Max of 5 filters
+        2           MAX INT     No limit
+     */
+
+    private int positionForMaxFilters(Integer maxFilters) {
+        if (maxFilters == null || maxFilters > 5) {
+            return 2;
+        } else if (maxFilters > 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    private int maxFiltersForPosition(int position) {
+        switch (position) {
+            default:
+            case 0: return 0;
+            case 1: return 5;
+            case 2: return Integer.MAX_VALUE;
+        }
+    }
+
+    private int positionForScanMode(Integer scanMode) {
+        return (scanMode - Settings.SCAN_MODE_INUSE);
+    }
+
+    private int scanModeForPosition(int position) {
+        return (position + Settings.SCAN_MODE_INUSE);
     }
 
     public static Bundle options(SharedPreferences prefs) {
@@ -139,9 +185,28 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        Spinner maxFilters = (Spinner)findViewById(R.id.android_max_filters);
+        List<String> maxFiltersArray = new ArrayList<>(5);
+        maxFiltersArray.add("No Filters");
+        maxFiltersArray.add("5 Filters Max");
+        maxFiltersArray.add("No Limit");
+        ArrayAdapter<String> maxFiltersAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, maxFiltersArray);
+        maxFiltersAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        maxFilters.setAdapter(maxFiltersAdapter);
+
+        Spinner scanMode = (Spinner)findViewById(R.id.beacon_scan_mode);
+        List<String> scanModeArray = new ArrayList<>(5);
+        scanModeArray.add("In Use");
+        scanModeArray.add("Region");
+        scanModeArray.add("Always");
+        ArrayAdapter<String> scanModeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, scanModeArray);
+        scanModeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        scanMode.setAdapter(scanModeAdapter);
+
         loadPreferences();
 
-        Button bClearLocks = (Button)findViewById(R.id.clear_location_locks);
+        Button bClearLocks = (Button) findViewById(R.id.clear_location_locks);
         bClearLocks.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
                 Test.clearLocationLock(new Test.Completion() {
