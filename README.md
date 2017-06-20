@@ -26,6 +26,10 @@ There are a number of additional documents and resources available to facilitate
   Support and Testing Services. Swirl appreciates publishers willing to share their integrated application for Swirl testing. This is an added service that we provide you to ensure that your app has been properly integrated with our SDK. Please contact your Swirl Account Manager to schedule this testing.
 
 ## Release Notes
+**Version:** `3.4.1` &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `06/20/17`
+<p>
+Minor bug fixes.
+
 **Version:** `3.4` &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `05/15/17`
 <p>
 Improved handling and control for apps with No Title/No Actionbar themes.  Seamless Google proximity beacon API support.
