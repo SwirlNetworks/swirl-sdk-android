@@ -13,7 +13,7 @@ The Swirl platform is designed as a complete proximity platform detecting a vari
   - [Understanding and Modifying AndroidManifest.xml](#understanding-and-modifying-androidmanifestxml)
   - [Make Code Changes](#make-code-changes)
   - [Using Nearby with Swirl](#using-nearby-with-swirl)
-  - [PushIO Integration](#pushio-integration)
+  - [Oracle Responsys Mobile SDK Integration](#oracle-responsys-mobile-sdk-integration)
 
 ## Understanding Swirl
 ![](./images/sdk3-architecture-overview.png)
@@ -257,16 +257,16 @@ However, it is important to note that some attachments are treated specially by 
 
 The Swirlx example has all of the code you need to try the Nearby API integration ready to go.  All you need to do is search for Nearby in the `BaseApplication` and `MainActivity` java source and uncomment the lines that are commented out.  In addition, you should add the relevant API keys in the `AndroidManifest.xml` file.
 
-### PushIO Integration
-In order to integrate the PushIO SDK with the Swirl SDK you will need to include two key-value pairs in the Swirl SDK's User Info.
+### Oracle Responsys Mobile SDK Integration
+In order to integrate the Oracle Responsys Mobile SDK (formerly Push IO) with the Swirl SDK you will need to include two key-value pairs in the Swirl SDK's User Info.
  1. "oid" - Provides an identifier for a specific user. The identifier could be an email address, for example.
- 2. "oapi_key" - Provides the PushIO API Key used by your app.
+ 2. "oapi_key" - Provides the Oracle Responsys Mobile SDK API Key used by your app.
  
  These two values should be included in a JSONObject which is then set as the Swirl SDK's User Info. The following code snippet demonstrates a simple example of how to do this.
 
 ```java
 JSONObject userInfo = new JSONObject();
-userInfo.put("oid", <PushIO Identifier>);
+userInfo.put("oid", "<Identifier>");
 userInfo.put("oapi_key", PushIOManager.getInstance(this).getAPIKey());
 Swirl.getInstance().setUserInfo(userInfo);
 ```
