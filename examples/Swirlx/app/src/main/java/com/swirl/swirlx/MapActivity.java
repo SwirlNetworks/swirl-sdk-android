@@ -476,163 +476,164 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 				json.optLong("timestamp", 0),
 				(float)json.optDouble("accuracy", 0.0));
 	}
-}
 
-class VerticalSplitView implements View.OnTouchListener {
-	private View mContainerView;
-	private View mTopView;
-	private View mBottomView;
-	private View mResizeView;
 
-	private int mDownY;
-	private int mDownTopHeight;
-	private int mDownBottomHeight;
+	class VerticalSplitView implements View.OnTouchListener {
+		private View mContainerView;
+		private View mTopView;
+		private View mBottomView;
+		private View mResizeView;
 
-	public VerticalSplitView(View container, View topView, View bottomView, View resizeView) {
-		mContainerView = container;
-		mTopView = topView;
-		mBottomView = bottomView;
-		mResizeView = resizeView;
+		private int mDownY;
+		private int mDownTopHeight;
+		private int mDownBottomHeight;
 
-		mResizeView.setOnTouchListener(this);
+		public VerticalSplitView(View container, View topView, View bottomView, View resizeView) {
+			mContainerView = container;
+			mTopView = topView;
+			mBottomView = bottomView;
+			mResizeView = resizeView;
 
-		mContainerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-			@Override public void onGlobalLayout() {
-				mContainerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-				onFirstLayout();
+			mResizeView.setOnTouchListener(this);
+
+			mContainerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+				@Override public void onGlobalLayout() {
+					mContainerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+					onFirstLayout();
+				}
+			});
+		}
+
+		private void onFirstLayout() {
+			int resizeHeight = mResizeView.getHeight();
+			int remainingHeight = (mContainerView.getHeight() - resizeHeight);
+			int newTopHeight = (int)(0.6 * remainingHeight);
+			int newBottomHeight = (remainingHeight - newTopHeight);
+
+			mTopView.getLayoutParams().height = newTopHeight;
+			mBottomView.getLayoutParams().height = newBottomHeight;
+		}
+
+		@Override public boolean onTouch(View v, MotionEvent event) {
+			switch (MotionEventCompat.getActionMasked(event)) {
+				case MotionEvent.ACTION_DOWN:  return onTouchDown(event);
+				case MotionEvent.ACTION_MOVE:  return onTouchMove(event);
 			}
-		});
-	}
 
-	private void onFirstLayout() {
-		int resizeHeight = mResizeView.getHeight();
-		int remainingHeight = (mContainerView.getHeight() - resizeHeight);
-		int newTopHeight = (int)(0.6 * remainingHeight);
-		int newBottomHeight = (remainingHeight - newTopHeight);
-
-		mTopView.getLayoutParams().height = newTopHeight;
-		mBottomView.getLayoutParams().height = newBottomHeight;
-	}
-
-	@Override public boolean onTouch(View v, MotionEvent event) {
-		switch (MotionEventCompat.getActionMasked(event)) {
-			case MotionEvent.ACTION_DOWN:  return onTouchDown(event);
-			case MotionEvent.ACTION_MOVE:  return onTouchMove(event);
+			return true;
 		}
 
-		return true;
-	}
+		private boolean onTouchDown(MotionEvent ev) {
+			int x = (int)ev.getRawX();
+			int y = (int)ev.getRawY();
 
-	private boolean onTouchDown(MotionEvent ev) {
-		int x = (int)ev.getRawX();
-		int y = (int)ev.getRawY();
+			Rect rect = new Rect();
+			mResizeView.getGlobalVisibleRect(rect);
 
-		Rect rect = new Rect();
-		mResizeView.getGlobalVisibleRect(rect);
+			if (!rect.contains(x, y)) {
+				return false;
+			}
 
-		if (!rect.contains(x, y)) {
-			return false;
+			mDownY = y;
+			mDownTopHeight = mTopView.getHeight();
+			mDownBottomHeight = mBottomView.getHeight();
+
+			return true;
 		}
 
-		mDownY = y;
-		mDownTopHeight = mTopView.getHeight();
-		mDownBottomHeight = mBottomView.getHeight();
+		private boolean onTouchMove(MotionEvent ev) {
+			int dy = ((int)ev.getRawY() - mDownY);
 
-		return true;
+			if (mDownTopHeight+dy < 0) {
+				dy = -mDownTopHeight;
+			} else if (mDownBottomHeight-dy < 0) {
+				dy = mDownBottomHeight;
+			}
+
+			int newTopHeight = (mDownTopHeight + dy);
+			int newBottomHeight = (mDownBottomHeight - dy);
+
+			mTopView.getLayoutParams().height = newTopHeight;
+			mBottomView.getLayoutParams().height = newBottomHeight;
+
+			mContainerView.requestLayout();
+
+			return true;
+		}
 	}
 
-	private boolean onTouchMove(MotionEvent ev) {
-		int dy = ((int)ev.getRawY() - mDownY);
+	class HistoryListAdapter extends BaseAdapter {
+		private Context context;
+		private List<HistoryItem> items;
 
-		if (mDownTopHeight+dy < 0) {
-			dy = -mDownTopHeight;
-		} else if (mDownBottomHeight-dy < 0) {
-			dy = mDownBottomHeight;
+		public HistoryListAdapter(Context context, List<HistoryItem> items) {
+			this.context = context;
+			this.items = items;
 		}
 
-		int newTopHeight = (mDownTopHeight + dy);
-		int newBottomHeight = (mDownBottomHeight - dy);
-
-		mTopView.getLayoutParams().height = newTopHeight;
-		mBottomView.getLayoutParams().height = newBottomHeight;
-
-		mContainerView.requestLayout();
-
-		return true;
-	}
-}
-
-class HistoryListAdapter extends BaseAdapter {
-	private Context context;
-	private List<HistoryItem> items;
-
-	public HistoryListAdapter(Context context, List<HistoryItem> items) {
-		this.context = context;
-		this.items = items;
-	}
-
-	@Override public int getCount() {
-		return items.size();
-	}
-
-	@Override public Object getItem(int position) {
-		return items.get(position);
-	}
-
-	@Override public long getItemId(int position) {
-		return 0;
-	}
-
-	@Override public View getView(int position, View convertView, ViewGroup parent) {
-		HistoryItem item = items.get(position);
-
-		TwoLineListItem listItem;
-		if (convertView == null) {
-			LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			listItem = (TwoLineListItem)inflater.inflate(android.R.layout.simple_list_item_2, null);
-		} else {
-			listItem = (TwoLineListItem)convertView;
+		@Override public int getCount() {
+			return items.size();
 		}
 
-		final float scale = context.getResources().getDisplayMetrics().density;
-		((ViewGroup.MarginLayoutParams)listItem.getText1().getLayoutParams()).topMargin = (int)(2 * scale + 0.5f);
-		listItem.getText1().setHeight((int)(24 * scale + 0.5f));
-		listItem.getText2().setHeight((int)(20 * scale + 0.5f));
-		listItem.setMinimumHeight((int)(50 * scale + 0.5f));
+		@Override public Object getItem(int position) {
+			return items.get(position);
+		}
 
-		listItem.getText1().setText(item.getMarker().getTitle());
-		listItem.getText2().setText(item.getMarker().getSnippet());
+		@Override public long getItemId(int position) {
+			return 0;
+		}
 
-		return listItem;
-	}
-}
+		@Override public View getView(int position, View convertView, ViewGroup parent) {
+			HistoryItem item = items.get(position);
 
-class HistoryItem {
-	private JSONObject info;
-	private Location location;
-	private Marker marker;
-	private Circle circle;
+			TwoLineListItem listItem;
+			if (convertView == null) {
+				LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				listItem = (TwoLineListItem)inflater.inflate(android.R.layout.simple_list_item_2, null);
+			} else {
+				listItem = (TwoLineListItem)convertView;
+			}
 
-	public HistoryItem(JSONObject info, Location location, Marker marker, Circle circle) {
-		this.info = info;
-		this.location = location;
-		this.marker = marker;
-		this.circle = circle;
-	}
+			final float scale = context.getResources().getDisplayMetrics().density;
+			((ViewGroup.MarginLayoutParams)listItem.getText1().getLayoutParams()).topMargin = (int)(2 * scale + 0.5f);
+			listItem.getText1().setHeight((int)(24 * scale + 0.5f));
+			listItem.getText2().setHeight((int)(20 * scale + 0.5f));
+			listItem.setMinimumHeight((int)(50 * scale + 0.5f));
 
-	public JSONObject getInfo() {
-		return info;
-	}
+			listItem.getText1().setText(item.getMarker().getTitle());
+			listItem.getText2().setText(item.getMarker().getSnippet());
 
-	public Location getLocation() {
-		return location;
+			return listItem;
+		}
 	}
 
-	public Marker getMarker() {
-		return marker;
-	}
+	class HistoryItem {
+		private JSONObject info;
+		private Location location;
+		private Marker marker;
+		private Circle circle;
 
-	public Circle getCircle() {
-		return circle;
+		public HistoryItem(JSONObject info, Location location, Marker marker, Circle circle) {
+			this.info = info;
+			this.location = location;
+			this.marker = marker;
+			this.circle = circle;
+		}
+
+		public JSONObject getInfo() {
+			return info;
+		}
+
+		public Location getLocation() {
+			return location;
+		}
+
+		public Marker getMarker() {
+			return marker;
+		}
+
+		public Circle getCircle() {
+			return circle;
+		}
 	}
 }

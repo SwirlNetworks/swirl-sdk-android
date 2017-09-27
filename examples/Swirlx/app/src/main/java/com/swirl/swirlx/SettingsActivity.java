@@ -18,13 +18,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
-
+import com.swirl.API;
 import com.swirl.Settings;
-import com.swirl.Test;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private static void resetDefaults(SharedPreferences readonlyPrefs) {
         SharedPreferences.Editor prefs = readonlyPrefs.edit();
-        prefs.putString(Settings.API_HOST, "live");
+        prefs.putString(Settings.API_HOST, "");
         prefs.putString(Settings.CONTENT_CODE, "");
         prefs.putString(Settings.BEACON_FILTER, "");
         prefs.putString("field_1", "");
@@ -144,10 +141,10 @@ public class SettingsActivity extends AppCompatActivity {
         Button bClearLocks = (Button)findViewById(R.id.clear_location_locks);
         bClearLocks.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
-                Test.clearLocationLock(new Test.Completion() {
-                    @Override public void complete(boolean success) {
-                        clearLocksCompletion(success);
-                    }
+				API.getInstance().clearLocationLock( new API.Completion() {
+					@Override public void complete(int code) {
+						clearLocksCompletion(code == 0);
+					}
                 });
             }
         });
