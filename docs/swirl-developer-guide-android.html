@@ -41,7 +41,6 @@
 <li><a href="#understanding-and-modifying-androidmanifestxml">Understanding and Modifying AndroidManifest.xml</a></li>
 <li><a href="#make-code-changes">Make Code Changes</a></li>
 <li><a href="#using-nearby-with-swirl">Using Nearby with Swirl</a></li>
-<li><a href="#oracle-responsys-mobile-sdk-integration">Oracle Responsys Mobile SDK Integration</a></li>
 </ul>
 </li>
 </ul>
@@ -122,7 +121,7 @@ The Swirl SDK has the following dependecies:
 <p><a href="./images/sdk3-import-gradle-01.png" target="_blank"><img src="./images/sdk3-import-gradle-01.png" alt="" style="max-width:100%;"></a></p>
 <ol start="2">
 <li>
-<p>Edit the <em>Module</em> <code>build.gradle</code></p>
+<p>Edit <code>build.gradle (Module: app)</code></p>
 </li>
 <li>
 <p>Add a repository for the libs directory</p>
@@ -144,32 +143,9 @@ The Swirl SDK has the following dependecies:
 </li>
 </ol>
 <h4>
-<a id="user-content-adding-the-library-using-maven-or-jcenter" class="anchor" name="adding-the-library-using-maven-or-jcenter" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Adding the Library using Maven or JCenter</h4>
+<a id="user-content-adding-the-library-using-maven" class="anchor" name="adding-the-library-using-maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Adding the Library using Maven</h4>
 <ol>
-<li>
-<p>Edit the <em>Module</em> <code>build.gradle</code></p>
-</li>
-<li>
-<p>Add a line in <code>repositories</code> to support either Maven or JCenter</p>
-<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">repositories</span> {
-	mavenCentral()
-}</pre></div>
-<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">repositories</span> {
-	jcenter()
-}</pre></div>
-</li>
-<li>
-<p>Add a line in <code>dependencies</code> to compile the Swirl AAR</p>
-<div class="highlight highlight-source-groovy-gradle"><pre>compile <span class="pl-s"><span class="pl-pds">'</span>com.swirl:swirl-sdk-android:&lt;version&gt;<span class="pl-pds">'</span></span></pre></div>
-<p>i.e.</p>
-<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">dependencies</span> {
-    compile <span class="pl-s"><span class="pl-pds">'</span>com.swirl:swirl-sdk-android:3.3<span class="pl-pds">'</span></span>
-    <span class="pl-k">..</span>.
-}</pre></div>
-</li>
-<li>
-<p>Click <strong>"Sync Now"</strong> in the upper right to apply the changes</p>
-</li>
+<li><em>Coming soon</em></li>
 </ol>
 <h3>
 <a id="user-content-understanding-and-modifying-androidmanifestxml" class="anchor" name="understanding-and-modifying-androidmanifestxml" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Understanding and Modifying AndroidManifest.xml</h3>
@@ -213,12 +189,6 @@ The Swirl SDK has the following dependecies:
       &lt;/<span class="pl-ent">intent-filter</span>&gt;
   &lt;/<span class="pl-ent">receiver</span>&gt;
   &lt;<span class="pl-ent">activity</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.ContentActivity<span class="pl-pds">"</span></span>/&gt;</pre></div>
-<h4>
-<a id="user-content-proguard" class="anchor" name="proguard" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Proguard</h4>
-<p>If you are using Proguard to minimize your application, make sure you include the following lines in your proguard configuration file.</p>
-<pre><code>-keep public class com.swirl.*** { *; }
-</code></pre>
-<p>This will prevent the proguard process from removing needed symbols.</p>
 <h3>
 <a id="user-content-make-code-changes" class="anchor" name="make-code-changes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Make Code Changes</h3>
 <h4>
@@ -300,31 +270,6 @@ The Swirl SDK has the following dependecies:
 <h4>
 <a id="user-content-try-our-example" class="anchor" name="try-our-example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Try our example</h4>
 <p>The Swirlx example has all of the code you need to try the Nearby API integration ready to go.  All you need to do is search for Nearby in the <code>BaseApplication</code> and <code>MainActivity</code> java source and uncomment the lines that are commented out.  In addition, you should add the relevant API keys in the <code>AndroidManifest.xml</code> file.</p>
-<h3>
-<a id="user-content-oracle-responsys-mobile-sdk-integration" class="anchor" name="oracle-responsys-mobile-sdk-integration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Oracle Responsys Mobile SDK Integration</h3>
-<p>In order to integrate the Oracle Responsys Mobile SDK (formerly Push IO) with the Swirl SDK you will need to include three key-value pairs in the Swirl SDK's User Info.</p>
-<ol>
-<li>"oapi_key" - (required) Provides the Oracle Responsys Mobile SDK API Key used by your app.</li>
-<li>"odevice_id" - (required) An identifier used by the Oracle Responsys Mobile SDK to identify a mobile device.</li>
-<li>"oid" - (optional*) Provides a unique identifier for a mobile device user that is linked in Responsys to a known user profile. An example of an "oid" identifier could be an email address or a customer ID for example.</li>
-</ol>
-<p>* In order to utilize Responsys Programs via Swirl-mapped Responsys custom events, “oid” is required. In the absence of "oid", Swirl will utilize the "odevice_id" for direct triggering of Responsys push campaigns.</p>
-<p>These three values should be included in a JSONObject which is then set as the Swirl SDK's User Info. The following code snippet demonstrates a simple example of how to do this.</p>
-<div class="highlight highlight-source-java"><pre><span class="pl-smi">JSONObject</span> userInfo <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">JSONObject</span>();
-userInfo<span class="pl-k">.</span>put(<span class="pl-s"><span class="pl-pds">"</span>oapi_key<span class="pl-pds">"</span></span>, <span class="pl-smi">PushIOManager</span><span class="pl-k">.</span>getInstance(<span class="pl-c1">this</span>)<span class="pl-k">.</span>getAPIKey());
-userInfo<span class="pl-k">.</span>put(<span class="pl-s"><span class="pl-pds">"</span>odevice_id<span class="pl-pds">"</span></span>, <span class="pl-smi">PushIOManager</span><span class="pl-k">.</span>getInstance(<span class="pl-c1">this</span>)<span class="pl-k">.</span>getExternalDeviceTrackingID());
-userInfo<span class="pl-k">.</span>put(<span class="pl-s"><span class="pl-pds">"</span>oid<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>&lt;Identifier&gt;<span class="pl-pds">"</span></span>);
-<span class="pl-smi">Swirl</span><span class="pl-k">.</span>getInstance()<span class="pl-k">.</span>setUserInfo(userInfo);</pre></div>
-<h3>
-<a id="user-content-kouponmedia-mobile-sdk-integration" class="anchor" name="kouponmedia-mobile-sdk-integration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>KouponMedia Mobile SDK Integration</h3>
-<p>The Swirlx sample application includes source code for a custom content handler that integrates with Koupon Media's offer system.  The sample module gets an offerId attribute from the custom content creative and uses that id in API calls to Koupon Media's servers in order to add an offer for the user and to fetch attributes about that offer for the purpose of creating a contextual notification.  The sample code modifies the content with the notification and then allows the modified content to flow through the system.</p>
-<p>To instantiate the <code>KouponMediaManager</code> you need the API Key, API Secret and User identifier for your KouponMedia account and you need to construct the object and add it as a delegate to Swirls multi-delegate event bus.</p>
-<div class="highlight highlight-source-java"><pre>  <span class="pl-smi">Swirl</span><span class="pl-k">.</span>getInstance(<span class="pl-c1">this</span>)<span class="pl-k">.</span>addListener(<span class="pl-k">new</span> <span class="pl-smi">KouponMediaListener</span>(<span class="pl-c1">this</span>, <span class="pl-s"><span class="pl-pds">"</span>KM-API-KEY<span class="pl-pds">"</span></span>,
-                <span class="pl-s"><span class="pl-pds">"</span>KM-API-SECRET<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>KM-USER-ID<span class="pl-pds">"</span></span>));</pre></div>
-<p>You will also need to change the URLs in the KouponMediaListener source code as the ones in the sample code point to the KouponMedia sandbox environment:</p>
-<div class="highlight highlight-source-java"><pre>    <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-smi">String</span>   <span class="pl-c1">KM_BASE_URL</span>             <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>https://consumer.sandbox1.kouponmedia.com/v2<span class="pl-pds">"</span></span>;
-    <span class="pl-k">private</span> <span class="pl-k">static</span> <span class="pl-smi">String</span>   <span class="pl-c1">KM_DEFAULT_VIEWER_URL</span>   <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>https://offer-sandbox1.kou.pn/OfferViewer/Redirect.aspx?property_code=swirl_mobilecapture&amp;offers=%s<span class="pl-pds">"</span></span>;</pre></div>
-<p>Finally, by default the sample code pops a mobile browser window that points to the default KouponMedia mobile offier viewer.  If you have tightly integrated the KM sdk and fuctionality into your application and have an offer inbox that you want to direct the user to when they encounter a Swirl placement tied to an offer or interact with a notification generated by such an encounter, then you will need to set the property <code>offerViewerURL</code> to a custom URL scheme/intent that can direct the user to that inbox.</p>
 <!-- END-CONTENT -->
 						</article>
 					</div>
