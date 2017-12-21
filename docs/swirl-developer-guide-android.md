@@ -12,7 +12,10 @@ The Swirl platform is designed as a complete proximity platform detecting a vari
   - [Add Library to your Application](#add-library-to-your-application)
   - [Understanding and Modifying AndroidManifest.xml](#understanding-and-modifying-androidmanifestxml)
   - [Make Code Changes](#make-code-changes)
+  - [Remote Notifications](#remote-notifications)
   - [Using Nearby with Swirl](#using-nearby-with-swirl)
+  - [Oracle Responsys Mobile SDK Integration](#oracle-responsys-mobile-sdk-integration)
+  - [KouponMedia Integration](#kouponmedia-mobile-sdk-integration)
 
 ## Understanding Swirl
 ![](./images/sdk3-architecture-overview.png)
@@ -79,7 +82,7 @@ The Swirl SDK has the following dependecies:
 
  ![](./images/sdk3-import-gradle-01.png)
  
- 2. Edit `build.gradle (Module: app)`
+ 2. Edit the *Module* `build.gradle`
  3. Add a repository for the libs directory
     ```gradle
     repositories {
@@ -98,8 +101,34 @@ The Swirl SDK has the following dependecies:
     ```
  5. Click **"Sync Now"** in the upper right to apply the changes
 
-#### Adding the Library using Maven
-  1. *Coming soon*
+#### Adding the Library using Maven or JCenter
+ 1. Edit the *Module* `build.gradle`
+ 2. Add a line in `repositories` to support either Maven or JCenter
+	```gradle
+	repositories {
+		mavenCentral()
+	}
+	```
+	
+	```gradle
+	repositories {
+		jcenter()
+	}
+	```	
+	
+ 3. Add a line in `dependencies` to compile the Swirl AAR
+	```gradle
+    compile 'com.swirl:swirl-sdk-android:<version>'
+    ```
+	i.e.
+	```gradle
+    dependencies {
+        compile 'com.swirl:swirl-sdk-android:3.3'
+        ...
+    }
+    ```
+	
+ 4. Click **"Sync Now"** in the upper right to apply the changes
 
 ### Understanding and Modifying AndroidManifest.xml
 Curently, most of the manifest changes are not included in the libraries AndroidManifest.xml and you are required to add the necessary permissions and registrations to the application AndroidManifest.xml.  This is currently done on purpose to give more control to the application developer with regards to what features to enable, etc.
@@ -150,6 +179,14 @@ In order for the library to function properly, a number of components need to be
   <activity android:name="com.swirl.ContentActivity"/>
 ```
 
+#### Proguard
+
+If you are using Proguard to minimize your application, make sure you include the following lines in your proguard configuration file.
+```
+-keep public class com.swirl.*** { *; }
+```
+This will prevent the proguard process from removing needed symbols.
+
 ### Make Code Changes
 
 #### Permission Changes
@@ -172,6 +209,34 @@ public class BaseApplication extends Application {
         Swirl.getInstance().start(options);
     }
 }
+```
+
+### Remote Notifications
+
+Swirl supports GCM (Google Cloud Messaging) for remote notifications.  Enabling support for this feature requires that you provide Swirl the
+project or sender id that GCM requires.  This is done through Settings or passed at startup through the startup options.
+
+```java
+        Settings.putString(Settings.GOOGLE_SENDER_ID, "<YOUR-SENDER-ID>");
+```
+
+In addition, you must also declare the following receivers and services in your Manifest.xml.  Properly registering these
+components is required for you to receive remote notifications.
+
+```xml
+       <receiver
+            android:name="com.swirl.Swirl$GcmReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="com.swirl.Swirl$GcmListener" android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
 ```
 
 ### Using Nearby with Swirl
@@ -229,3 +294,39 @@ However, it is important to note that some attachments are treated specially by 
 #### Try our example
 
 The Swirlx example has all of the code you need to try the Nearby API integration ready to go.  All you need to do is search for Nearby in the `BaseApplication` and `MainActivity` java source and uncomment the lines that are commented out.  In addition, you should add the relevant API keys in the `AndroidManifest.xml` file.
+
+### Oracle Responsys Mobile SDK Integration
+In order to integrate the Oracle Responsys Mobile SDK (formerly Push IO) with the Swirl SDK you will need to include three key-value pairs in the Swirl SDK's User Info.
+ 1. "oapi_key" - (required) Provides the Oracle Responsys Mobile SDK API Key used by your app.
+ 2. "odevice_id" - (required) An identifier used by the Oracle Responsys Mobile SDK to identify a mobile device.
+ 3. "oid" - (optional*) Provides a unique identifier for a mobile device user that is linked in Responsys to a known user profile. An example of an "oid" identifier could be an email address or a customer ID for example.
+
+\* In order to utilize Responsys Programs via Swirl-mapped Responsys custom events, “oid” is required. In the absence of "oid", Swirl will utilize the "odevice_id" for direct triggering of Responsys push campaigns.
+
+These three values should be included in a JSONObject which is then set as the Swirl SDK's User Info. The following code snippet demonstrates a simple example of how to do this.
+
+```java
+JSONObject userInfo = new JSONObject();
+userInfo.put("oapi_key", PushIOManager.getInstance(this).getAPIKey());
+userInfo.put("odevice_id", PushIOManager.getInstance(this).getExternalDeviceTrackingID());
+userInfo.put("oid", "<Identifier>");
+Swirl.getInstance().setUserInfo(userInfo);
+```
+
+### KouponMedia Mobile SDK Integration
+The Swirlx sample application includes source code for a custom content handler that integrates with Koupon Media's offer system.  The sample module gets an offerId attribute from the custom content creative and uses that id in API calls to Koupon Media's servers in order to add an offer for the user and to fetch attributes about that offer for the purpose of creating a contextual notification.  The sample code modifies the content with the notification and then allows the modified content to flow through the system.
+
+To instantiate the `KouponMediaManager` you need the API Key, API Secret and User identifier for your KouponMedia account and you need to construct the object and add it as a delegate to Swirls multi-delegate event bus.
+
+```java
+  Swirl.getInstance(this).addListener(new KouponMediaListener(this, "KM-API-KEY",
+                "KM-API-SECRET", "KM-USER-ID"));
+```
+You will also need to change the URLs in the KouponMediaListener source code as the ones in the sample code point to the KouponMedia sandbox environment:
+
+```java
+    private static String   KM_BASE_URL             = "https://consumer.sandbox1.kouponmedia.com/v2";
+    private static String   KM_DEFAULT_VIEWER_URL   = "https://offer-sandbox1.kou.pn/OfferViewer/Redirect.aspx?property_code=swirl_mobilecapture&offers=%s";
+```
+Finally, by default the sample code pops a mobile browser window that points to the default KouponMedia mobile offier viewer.  If you have tightly integrated the KM sdk and fuctionality into your application and have an offer inbox that you want to direct the user to when they encounter a Swirl placement tied to an offer or interact with a notification generated by such an encounter, then you will need to set the property `offerViewerURL` to a custom URL scheme/intent that can direct the user to that inbox.
+
