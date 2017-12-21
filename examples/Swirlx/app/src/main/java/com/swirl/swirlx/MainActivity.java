@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.swirl.Completion;
 import com.swirl.Content;
 import com.swirl.ContentManager;
 import com.swirl.Location;
@@ -265,15 +264,15 @@ public class MainActivity extends AppCompatActivity {
             visitManager = manager; onLocationUpdate();
         }
 
-		@Override protected void onReceiveContentURL(ContentManager manager, Content content) {
-			contentReceived(content);
-		}
-		@Override protected void onReceiveContentView(ContentManager manager, Content content) {
-			contentReceived(content);
-		}
-		@Override protected void onReceiveContentCustom(ContentManager manager, Content content, Completion completion) {
-			contentReceived(content);
-		}
+        @Override protected void onReceiveContentURL(ContentManager manager, Content content, boolean fromNotification) {
+            contentReceived(content);
+        }
+        @Override protected void onReceiveContentView(ContentManager manager, Content content, boolean fromNotification) {
+            contentReceived(content);
+        }
+        @Override protected void onReceiveContentCustom(ContentManager manager, Content content, boolean fromNotification) {
+            contentReceived(content);
+        }
         private void contentReceived(Content content) {
             if (content.getAttributes() != null) {
                 contentAttributes = String.format("Content Attributes: %s", content.getAttributes());
