@@ -51,7 +51,12 @@ Support and Testing Services. Swirl appreciates publishers willing to share thei
 </ul>
 <h2>
 <a id="user-content-release-notes" class="anchor" name="release-notes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Release Notes</h2>
-<p><strong>Version:</strong> <code>3.6</code>            <strong>Date:</strong> <code>12/20/17</code></p>
+<p><strong>Version:</strong> <code>3.6.1</code>            <strong>Date:</strong> <code>2/23/18</code></p>
+<p>
+Removed dependency that was forcing GCM inclusion when not strictly necessary, documented FCM support. 
+Fixed an issue where ContentViewActivity was always waiting for content to load before displaying.
+Fixed a crash that could occur when unwinding from a malformed URL exception.
+</p><p><strong>Version:</strong> <code>3.6</code>            <strong>Date:</strong> <code>12/20/17</code></p>
 <p>
 Added support for rich notifications, scheduled push notifications.  Added ability to intercept all url intent requests  
 (handleURLIntent on ContentManager) even from tap area widgets in content.  Added custom event logging. 

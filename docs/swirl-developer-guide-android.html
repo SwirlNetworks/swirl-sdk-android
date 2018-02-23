@@ -111,8 +111,16 @@
 <a id="user-content-verify-tools-and-targets" class="anchor" name="verify-tools-and-targets" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Verify Tools and Targets</h3>
 <p>The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above.<br>
 The Swirl SDK has the following dependecies:
-'com.google.android.gms:play-services-auth:9+'
-'com.google.android.gms:play-services-nearby:9+'</p>
+compile 'com.android.support:support-v4:[25,26)'
+compile 'com.android.support:appcompat-v7:[25,26)'
+compile 'com.android.support:animated-vector-drawable:[25,26)'
+compile 'com.google.android.gms:play-services-ads:[10.0,)'
+compile 'com.google.android.gms:play-services-auth:[10.0,)'
+compile 'com.google.android.gms:play-services-nearby:[10.0,)'</p>
+<p>If you are referencing the GCM classes:
+compile 'com.google.android.gms:play-services-gcm:[10.0,)'</p>
+<p>If you are referencing the FCM classes:
+compile 'com.google.firebase:firebase-messaging:[11.8,)'</p>
 <h3>
 <a id="user-content-add-library-to-your-application" class="anchor" name="add-library-to-your-application" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Add Library to your Application</h3>
 <h4>
@@ -245,24 +253,39 @@ The Swirl SDK has the following dependecies:
 }</pre></div>
 <h3>
 <a id="user-content-remote-notifications" class="anchor" name="remote-notifications" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Remote Notifications</h3>
-<p>Swirl supports GCM (Google Cloud Messaging) for remote notifications.  Enabling support for this feature requires that you provide Swirl the
+<p>Swirl supports GCM (Google Cloud Messaging) and FCM (Firebase Cloud Messaging)for remote notifications.  Enabling support for this feature requires that you provide Swirl the
 project or sender id that GCM requires.  This is done through Settings or passed at startup through the startup options.</p>
+<h4>
+<a id="user-content-google-cloud-messaging-gcm" class="anchor" name="google-cloud-messaging-gcm" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Google Cloud Messaging (GCM)</h4>
 <div class="highlight highlight-source-java"><pre>        <span class="pl-smi">Settings</span><span class="pl-k">.</span>putString(<span class="pl-smi">Settings</span><span class="pl-c1"><span class="pl-k">.</span>GOOGLE_SENDER_ID</span>, <span class="pl-s"><span class="pl-pds">"</span>&lt;YOUR-SENDER-ID&gt;<span class="pl-pds">"</span></span>);</pre></div>
 <p>In addition, you must also declare the following receivers and services in your Manifest.xml.  Properly registering these
 components is required for you to receive remote notifications.</p>
 <div class="highlight highlight-text-xml"><pre>       &lt;<span class="pl-ent">receiver</span>
-            <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.Swirl$GcmReceiver<span class="pl-pds">"</span></span>
+            <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.Gcm$Receiver<span class="pl-pds">"</span></span>
             <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">permission</span>=<span class="pl-s"><span class="pl-pds">"</span>com.google.android.c2dm.permission.SEND<span class="pl-pds">"</span></span> &gt;
             &lt;<span class="pl-ent">intent-filter</span>&gt;
                 &lt;<span class="pl-ent">action</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.google.android.c2dm.intent.RECEIVE<span class="pl-pds">"</span></span> /&gt;
             &lt;/<span class="pl-ent">intent-filter</span>&gt;
         &lt;/<span class="pl-ent">receiver</span>&gt;
         &lt;<span class="pl-ent">service</span>
-            <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.Swirl$GcmListener<span class="pl-pds">"</span></span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">exported</span>=<span class="pl-s"><span class="pl-pds">"</span>false<span class="pl-pds">"</span></span> &gt;
+            <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.Gcm$Listener<span class="pl-pds">"</span></span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">exported</span>=<span class="pl-s"><span class="pl-pds">"</span>false<span class="pl-pds">"</span></span> &gt;
             &lt;<span class="pl-ent">intent-filter</span>&gt;
                 &lt;<span class="pl-ent">action</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.google.android.c2dm.intent.RECEIVE<span class="pl-pds">"</span></span> /&gt;
             &lt;/<span class="pl-ent">intent-filter</span>&gt;
         &lt;/<span class="pl-ent">service</span>&gt;</pre></div>
+<h4>
+<a id="user-content-firebase-cloud-messaging-fcm" class="anchor" name="firebase-cloud-messaging-fcm" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Firebase Cloud Messaging (FCM)</h4>
+<p>FCM is basically GCM with a slightly different client interface and requires different components to be registered.  <strong>Note:</strong> you must add the <strong>fcm:</strong> prefix to the SENDER_ID to tell the system to use FCM.</p>
+<div class="highlight highlight-source-java"><pre>        <span class="pl-smi">Settings</span><span class="pl-k">.</span>putString(<span class="pl-smi">Settings</span><span class="pl-c1"><span class="pl-k">.</span>GOOGLE_SENDER_ID</span>, <span class="pl-s"><span class="pl-pds">"</span>fcm:&lt;YOUR-SENDER-ID&gt;<span class="pl-pds">"</span></span>);</pre></div>
+<p>In addition, you must also declare the following services in your Manifest.xml.  Properly registering these
+components is required for you to receive remote notifications.</p>
+<div class="highlight highlight-text-xml"><pre>		<span class="pl-c"><span class="pl-c">&lt;!--</span>Firebase Cloud Messaging<span class="pl-c">--&gt;</span></span>
+		&lt;<span class="pl-ent">service</span>
+			android:name=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.Fcm$Service<span class="pl-pds">"</span></span>&gt;
+			&lt;<span class="pl-ent">intent-filter</span>&gt;
+				&lt;<span class="pl-ent">action</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.google.firebase.MESSAGING_EVENT<span class="pl-pds">"</span></span>/&gt;
+			&lt;/<span class="pl-ent">intent-filter</span>&gt;
+		&lt;/<span class="pl-ent">service</span>&gt;</pre></div>
 <h3>
 <a id="user-content-using-nearby-with-swirl" class="anchor" name="using-nearby-with-swirl" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using Nearby with Swirl</h3>
 <p>Swirl supports Nearby in a number of ways.  You can use Swirl to manage the registration of your beacons and attachments with Nearby and you can use the Swirl SDK to detect beacons and their attachments whether they were registered through Swirl's platform or not.  Beacons registered with the Swirl will be available for Swirl's targeted content delivery, but the SDK can detect and return any attachments on the beacon.</p>
@@ -287,13 +310,13 @@ components is required for you to receive remote notifications.</p>
 <h4>
 <a id="user-content-getting-beacon-attachments" class="anchor" name="getting-beacon-attachments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting Beacon Attachments</h4>
 <p>Nearby has a very flexible system for attaching data to beacons and the SDK will return those attachments when encountered through a callback on the <code>SwirlListener</code>:</p>
-<div class="highlight highlight-source-java"><pre>    <span class="pl-c"><span class="pl-c">/*</span>*</span>
+<div class="highlight highlight-source-java"><pre>    <span class="pl-c"><span class="pl-c">/**</span></span>
 <span class="pl-c">     * Call whenever the NearbyManager posts a nearby related message.</span>
-<span class="pl-c">     * @param manager The NearbyManager</span>
-<span class="pl-c">     * @param namespace The project or public attachment namespace</span>
-<span class="pl-c">     * @param type The attachement type</span>
-<span class="pl-c">     * @param content The byte array which is the message content</span>
-<span class="pl-c">     * @param rssi The signal strength if available, or -1 if not available</span>
+<span class="pl-c">     * <span class="pl-k">@param</span> manager The NearbyManager</span>
+<span class="pl-c">     * <span class="pl-k">@param</span> namespace The project or public attachment namespace</span>
+<span class="pl-c">     * <span class="pl-k">@param</span> type The attachement type</span>
+<span class="pl-c">     * <span class="pl-k">@param</span> content The byte array which is the message content</span>
+<span class="pl-c">     * <span class="pl-k">@param</span> rssi The signal strength if available, or -1 if not available</span>
 <span class="pl-c">     <span class="pl-c">*/</span></span>
     <span class="pl-k">protected</span> <span class="pl-k">void</span> onNearbyMessage(<span class="pl-smi">NearbyManager</span> manager, <span class="pl-smi">String</span> namespace, 
     					<span class="pl-smi">String</span> type, <span class="pl-k">byte</span>[] content, <span class="pl-k">int</span> rssi);</pre></div>
