@@ -71,8 +71,18 @@ Log in to the Swirl console using supported browser (Chrome or Safari) and using
 ### Verify Tools and Targets
 The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above.  
 The Swirl SDK has the following dependecies:
-	'com.google.android.gms:play-services-auth:9+'
-	'com.google.android.gms:play-services-nearby:9+'
+    compile 'com.android.support:support-v4:[25,26)'
+    compile 'com.android.support:appcompat-v7:[25,26)'
+    compile 'com.android.support:animated-vector-drawable:[25,26)'
+    compile 'com.google.android.gms:play-services-ads:[10.0,)'
+    compile 'com.google.android.gms:play-services-auth:[10.0,)'
+    compile 'com.google.android.gms:play-services-nearby:[10.0,)'
+    
+If you are referencing the GCM classes:
+    compile 'com.google.android.gms:play-services-gcm:[10.0,)'
+    
+If you are referencing the FCM classes:
+    compile 'com.google.firebase:firebase-messaging:[11.8,)'
 	
 ### Add Library to your Application
 
@@ -212,31 +222,51 @@ public class BaseApplication extends Application {
 ```
 
 ### Remote Notifications
-
-Swirl supports GCM (Google Cloud Messaging) for remote notifications.  Enabling support for this feature requires that you provide Swirl the
+Swirl supports GCM (Google Cloud Messaging) and FCM (Firebase Cloud Messaging)for remote notifications.  Enabling support for this feature requires that you provide Swirl the
 project or sender id that GCM requires.  This is done through Settings or passed at startup through the startup options.
+
+#### Google Cloud Messaging (GCM)
 
 ```java
         Settings.putString(Settings.GOOGLE_SENDER_ID, "<YOUR-SENDER-ID>");
 ```
-
 In addition, you must also declare the following receivers and services in your Manifest.xml.  Properly registering these
 components is required for you to receive remote notifications.
 
 ```xml
        <receiver
-            android:name="com.swirl.Swirl$GcmReceiver"
+            android:name="com.swirl.Gcm$Receiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </receiver>
         <service
-            android:name="com.swirl.Swirl$GcmListener" android:exported="false" >
+            android:name="com.swirl.Gcm$Listener" android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
+```
+
+#### Firebase Cloud Messaging (FCM)
+FCM is basically GCM with a slightly different client interface and requires different components to be registered.  **Note:** you must add the **fcm:** prefix to the SENDER_ID to tell the system to use FCM.
+
+```java
+        Settings.putString(Settings.GOOGLE_SENDER_ID, "fcm:<YOUR-SENDER-ID>");
+```
+
+In addition, you must also declare the following services in your Manifest.xml.  Properly registering these
+components is required for you to receive remote notifications.
+
+```xml
+		<!--Firebase Cloud Messaging-->
+		<service
+			android:name="com.swirl.Fcm$Service">
+			<intent-filter>
+				<action android:name="com.google.firebase.MESSAGING_EVENT"/>
+			</intent-filter>
+		</service>
 ```
 
 ### Using Nearby with Swirl

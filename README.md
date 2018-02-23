@@ -26,6 +26,12 @@ There are a number of additional documents and resources available to facilitate
   Support and Testing Services. Swirl appreciates publishers willing to share their integrated application for Swirl testing. This is an added service that we provide you to ensure that your app has been properly integrated with our SDK. Please contact your Swirl Account Manager to schedule this testing.
 
 ## Release Notes
+**Version:** `3.6.1`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `2/23/18`
+<p>
+Removed dependency that was forcing GCM inclusion when not strictly necessary, documented FCM support. 
+Fixed an issue where ContentViewActivity was always waiting for content to load before displaying.
+Fixed a crash that could occur when unwinding from a malformed URL exception.
+
 **Version:** `3.6`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `12/20/17`
 <p>
 Added support for rich notifications, scheduled push notifications.  Added ability to intercept all url intent requests  
