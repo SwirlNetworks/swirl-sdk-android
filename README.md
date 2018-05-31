@@ -26,15 +26,6 @@ There are a number of additional documents and resources available to facilitate
   Support and Testing Services. Swirl appreciates publishers willing to share their integrated application for Swirl testing. This is an added service that we provide you to ensure that your app has been properly integrated with our SDK. Please contact your Swirl Account Manager to schedule this testing.
 
 ## Release Notes
-**Version:** `3.7.1`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `5/20/18`
-<p>
-Removed specific lat/long paramters from API calls (under option control, default NO).
-
-**Version:** `3.7`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `4/15/18`
-<p>
-Improved support for Android 8.0 (location and background restrictions, notification channels).  
-Updated minimum Google Play Services version to version 11.6.0.
-
 **Version:** `3.6.1`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Date:** `2/23/18`
 <p>
 Removed dependency that was forcing GCM inclusion when not strictly necessary, documented FCM support. 
