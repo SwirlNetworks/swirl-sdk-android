@@ -110,16 +110,13 @@
 <h3>
 <a id="user-content-verify-tools-and-targets" class="anchor" name="verify-tools-and-targets" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Verify Tools and Targets</h3>
 <p>The Swirl SDK is compatible with Android versions 5.0 (API level 21) and above.<br>
-The current version is compiled with compileSdkVersion 26.  The current targetSdkVersion is 23.</p>
-<p>The Swirl SDK has the following dependecies:
-compile 'com.android.support:support-v4:26.1.0'
-compile 'com.android.support:appcompat-v7:26.1.0'
-compile 'com.android.support:animated-vector-drawable:26.1.0'
+The Swirl SDK has the following dependecies:
+compile 'com.android.support:support-v4:[25,26)'
+compile 'com.android.support:appcompat-v7:[25,26)'
+compile 'com.android.support:animated-vector-drawable:[25,26)'
 compile 'com.google.android.gms:play-services-ads:[10.0,)'
 compile 'com.google.android.gms:play-services-auth:[10.0,)'
-compile 'com.google.android.gms:play-services-nearby:[10.0,)'
-compile 'com.google.android.gms:play-services-gcm:[10.2.1,)'
-compile 'com.google.firebase:firebase-messaging:[11.8,)'</p>
+compile 'com.google.android.gms:play-services-nearby:[10.0,)'</p>
 <p>If you are referencing the GCM classes:
 compile 'com.google.android.gms:play-services-gcm:[10.0,)'</p>
 <p>If you are referencing the FCM classes:
@@ -201,11 +198,7 @@ compile 'com.google.firebase:firebase-messaging:[11.8,)'</p>
  &lt;<span class="pl-ent">uses-permission</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>android.permission.ACCESS_FINE_LOCATION<span class="pl-pds">"</span></span> /&gt;      <span class="pl-c"><span class="pl-c">&lt;!--</span> Optional for occasional fine-location <span class="pl-c">--&gt;</span></span></pre></div>
 <h4>
 <a id="user-content-startup-options" class="anchor" name="startup-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Startup Options</h4>
-<p>There are several ways to pass startup options to the Swirl library.  You can do so when you call start by passing a Bundle of options in.</p>
-<div class="highlight highlight-source-java"><pre>        <span class="pl-smi">Bundle</span> options <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">Bundle</span>();
-        options<span class="pl-k">.</span>putString(<span class="pl-smi">Settings</span><span class="pl-c1"><span class="pl-k">.</span>NOTIFICATION_CHANNEL</span>, <span class="pl-s"><span class="pl-pds">"</span>my_notification_channel_id<span class="pl-pds">"</span></span>);
-        <span class="pl-c1">...</span></pre></div>
-<p>You can also use the string representation of the option added to the application meta-data within the AndroidManifest.xml.  Note that all such keys are prefixed with <code>com.swirl</code>.  See below for an example using API_KEY.</p>
+<p>There are several ways to pass startup options to the Swirl library.  You can do so when you call start by passing a Bundle of options in, or you can use the string representation of the option added to the application meta-data within the AndroidManifest.xml.  Note that all such keys are prefixed with <code>com.swirl</code>.  See below for an example using API_KEY.</p>
 <div class="highlight highlight-text-xml"><pre> &lt;<span class="pl-ent">application</span>
      &lt;meta-data <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.api_key<span class="pl-pds">"</span></span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">value</span>=<span class="pl-s"><span class="pl-pds">"</span>YOU-CAN-PUT-YOUR-API-KEY-HERE<span class="pl-pds">"</span></span>/&gt;
      ...</pre></div>
@@ -220,7 +213,7 @@ compile 'com.google.firebase:firebase-messaging:[11.8,)'</p>
 <div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">application</span>
 		android:name=<span class="pl-s"><span class="pl-pds">"</span>.BaseApplication<span class="pl-pds">"</span></span>&gt;
 		
-  &lt;<span class="pl-ent">service</span>  <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.Swirl$Service<span class="pl-pds">"</span></span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">permission</span>=<span class="pl-s"><span class="pl-pds">"</span>android.permission.BIND_JOB_SERVICE<span class="pl-pds">"</span></span>/&gt;
+  &lt;<span class="pl-ent">service</span>  <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.Swirl$Service<span class="pl-pds">"</span></span>/&gt;
   &lt;<span class="pl-ent">receiver</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.Swirl$Receiver<span class="pl-pds">"</span></span>        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">enabled</span>=<span class="pl-s"><span class="pl-pds">"</span>true<span class="pl-pds">"</span></span>/&gt;
   &lt;<span class="pl-ent">receiver</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.Swirl$LocationChanged<span class="pl-pds">"</span></span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">enabled</span>=<span class="pl-s"><span class="pl-pds">"</span>true<span class="pl-pds">"</span></span>/&gt;
   &lt;<span class="pl-ent">receiver</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.Swirl$DeviceChanged<span class="pl-pds">"</span></span>   <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">enabled</span>=<span class="pl-s"><span class="pl-pds">"</span>true<span class="pl-pds">"</span></span>&gt;
@@ -230,11 +223,6 @@ compile 'com.google.firebase:firebase-messaging:[11.8,)'</p>
       &lt;/<span class="pl-ent">intent-filter</span>&gt;
   &lt;/<span class="pl-ent">receiver</span>&gt;
   &lt;<span class="pl-ent">activity</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.swirl.ContentActivity<span class="pl-pds">"</span></span>/&gt;</pre></div>
-<h4>
-<a id="user-content-changes-for-android-80" class="anchor" name="changes-for-android-80" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Changes for Android 8.0</h4>
-<p>If you are targeting API 26 and above, please note that you will need to provide a valid notification channel ID to be used for all notifications generated by the SDK.  You pass that in as in the above example using Settings.NOTIFICATION_CHANNEL.
-You also need to add the permission.BIND_JOB_SERVICE when you register the service in the Manifest.</p>
-<p>If you do not do these things, then the SDK will not function properly in the background.</p>
 <h4>
 <a id="user-content-proguard" class="anchor" name="proguard" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Proguard</h4>
 <p>If you are using Proguard to minimize your application, make sure you include the following lines in your proguard configuration file.</p>
